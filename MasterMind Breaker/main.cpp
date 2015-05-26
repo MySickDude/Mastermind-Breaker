@@ -22,16 +22,18 @@ int main(int argc, const char * argv[])
     
     const int nombreCases = demanderNombre("Combien de cases souhaitez-vous ?"), nombreCouleurs = demanderNombre("Combien de couleurs souhaitez-vous ?");
     int  longueurTableau = 100, essais[longueurTableau][nombreCases], score[longueurTableau][2], combinaisonCourante[nombreCases], scoreTemp[2] = {0};
-    bool essaisMarque [nombreCases], combinaisonCouranteMarque [nombreCases];
+    bool essaisMarque [nombreCases], combinaisonCouranteMarque [nombreCases], combinaisonTrouvee;
     
-    
+    genererCombinaison(combinaisonCourante, nombreCases, nombreCouleurs);
+
     for (int nombreEssais = 0; score[nombreEssais][0] != 4; nombreEssais++) {
+        
+        
         
         for (int i = 0; i < nombreCases; i++) {
             essais[nombreEssais][i] = combinaisonCourante[i];
         }
         
-        genererCombinaison(combinaisonCourante, nombreCases, nombreCouleurs);
         
         afficherCombinaison(combinaisonCourante, nombreCases);
         
@@ -42,41 +44,56 @@ int main(int argc, const char * argv[])
         cin >> score[nombreEssais][1];
         
         
-        while (scoreTemp[0] != score[nombreEssais][0] && scoreTemp[1] != score[nombreEssais][1]) {
-            fill(scoreTemp, scoreTemp + 2, 0);
-            
+        do {
+            combinaisonTrouvee = true;
             genererCombinaison(combinaisonCourante, nombreCases, nombreCouleurs);
             
-            for (int i = 0; i < nombreCases; i++) { //Remise à zéro des marques sur les combinaisons
-                essaisMarque[i] = false;
-                combinaisonCouranteMarque[i] = false;
-            }
-            
-            for (int i = 0; i < nombreCases; i++) { // Calcul du nombre de "noir" (bonne couleur au bon endroit)
-                if (combinaisonCourante [i] == essais[nombreEssais] [i]) {
-                    scoreTemp [0] += 1; // score[0] représente les noirs
-                    essaisMarque[i] = true;
-                    combinaisonCouranteMarque[i] = true;
+            for (int k = 0; k <= nombreEssais; k++) {
+                fill(scoreTemp, scoreTemp + 2, 0);
+                
+                for (int i = 0; i < nombreCases; i++) { //Remise à zéro des marques sur les combinaisons
+                    essaisMarque[i] = false;
+                    combinaisonCouranteMarque[i] = false;
                 }
-            }
-            
-            for (int i = 0; i < nombreCases; i++) { // Calcul du nombre de "blanc" (bonne couleur pas au même endroit)
-                if (not essaisMarque[i]) {
-                    for (int j = 0; j < nombreCases; j++) {
-                        if (combinaisonCourante[j] == essais[nombreEssais][i] && not combinaisonCouranteMarque[j]) {
-                            scoreTemp[1] += 1; // représente les blancs
-                            essaisMarque[i] = true;
-                            combinaisonCouranteMarque[j] = true;
-                            break;
-                        }
+                
+                for (int i = 0; i < nombreCases; i++) { // Calcul du nombre de "noir" (bonne couleur au bon endroit)
+                    if (combinaisonCourante [i] == essais[k] [i]) {
+                        scoreTemp [0] += 1; // score[0] représente les noirs
+                        essaisMarque[i] = true;
+                        combinaisonCouranteMarque[i] = true;
                     }
                 }
                 
+                for (int i = 0; i < nombreCases; i++) { // Calcul du nombre de "blanc" (bonne couleur pas au même endroit)
+                    if (not essaisMarque[i]) {
+                        for (int j = 0; j < nombreCases; j++) {
+                            if (combinaisonCourante[j] == essais[k][i] && not combinaisonCouranteMarque[j]) {
+                                scoreTemp[1] += 1; // représente les blancs
+                                essaisMarque[i] = true;
+                                combinaisonCouranteMarque[j] = true;
+                                break;
+                            }
+                        }
+                        
+                        
+                    }
+                    
+                    
+                    
+                }
+                
+                if(scoreTemp[0] != score[k][0] && scoreTemp[1] != score[k][1]){
+                    break;
+                }
             }
             
             
-            
-        }
+        } while(not combinaisonTrouvee);
+        
+        
+        
+        
+        
         
     }
     
@@ -108,43 +125,3 @@ int demanderNombre (string caption)
     cin >> nombre;
     return nombre;
 }
-
-/*
- 
- void calculScore(int combinaisonMystere [][], int combinaisonUtilisateur [][], int nombreCases, int score[], int nombreEssais) // Changer pour utiliser tableau bi-dimensionel ! (changer nom variable + envoyer nombreEssais)
- {
- bool combinaisonMystereMarque [nombreCases], combinaisonUtilisateurMarque [nombreCases];
- 
- 
- fill(score, score + 2, 0); // Remet à zéro les scores
- 
- for (int i = 0; i < nombreCases; i++) { //Remise à zéro des marques sur les combinaisons
- combinaisonMystereMarque[i] = false;
- combinaisonUtilisateurMarque[i] = false;
- }
- 
- for (int i = 0; i < nombreCases; i++) { // Calcul du nombre de "noir" (bonne couleur au bon endroit)
- if (combinaisonUtilisateur [i] == combinaisonMystere [i]) {
- score [0] += 1; // score[0] représente les noirs
- combinaisonMystereMarque[i] = true;
- combinaisonUtilisateurMarque[i] = true;
- }
- }
- 
- for (int i = 0; i < nombreCases; i++) { // Calcul du nombre de "blanc" (bonne couleur pas au même endroit)
- if (not combinaisonMystereMarque[i]) {
- for (int j = 0; j < nombreCases; j++) {
- if (combinaisonUtilisateur[j] == combinaisonMystere[i] && not combinaisonUtilisateurMarque[j]) {
- score[1] += 1; // représente les blancs
- combinaisonMystereMarque[i] = true;
- combinaisonUtilisateurMarque[j] = true;
- break;
- }
- }
- }
- 
- }
- 
- 
- }
- */

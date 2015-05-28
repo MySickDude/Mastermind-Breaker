@@ -21,19 +21,22 @@ int main(int argc, const char * argv[])
     srandomdev();
     
     const int nombreCases = demanderNombre("Combien de cases souhaitez-vous ?"), nombreCouleurs = demanderNombre("Combien de couleurs souhaitez-vous ?");
-    int  longueurTableau = 100, essais[longueurTableau][nombreCases], score[longueurTableau][2], combinaisonCourante[nombreCases], scoreTemp[2] = {0};
+    int  longueurTableau = 100, essais[longueurTableau][nombreCases], score[longueurTableau][2], combinaisonCourante[nombreCases], scoreTemp[2] = {0}, nombreEssais = 0;
     bool essaisMarque [nombreCases], combinaisonCouranteMarque [nombreCases], combinaisonTrouvee;
     
     genererCombinaison(combinaisonCourante, nombreCases, nombreCouleurs);
-
-    for (int nombreEssais = 0; score[nombreEssais][0] != 4; nombreEssais++) {
-        
-        
+    
+    for (int i = 0; i < longueurTableau; i++) {
+        score[i][0] = 0;
+        score[i][1] = 0;
+    }
+    
+    do {
+        nombreEssais++;
         
         for (int i = 0; i < nombreCases; i++) {
             essais[nombreEssais][i] = combinaisonCourante[i];
         }
-        
         
         afficherCombinaison(combinaisonCourante, nombreCases);
         
@@ -94,8 +97,7 @@ int main(int argc, const char * argv[])
         
         
         
-        
-    }
+    } while(score[nombreEssais][0] != 4);
     
     
     
